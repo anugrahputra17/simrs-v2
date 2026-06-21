@@ -6,9 +6,7 @@
     <meta name="description" content="SYMPHONY SIMRS v2.0 — Fasyankes Academic Simulation Engine">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SYMPHONY SIMRS v2.0')</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-warm-bg">

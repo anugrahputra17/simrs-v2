@@ -512,7 +512,7 @@
 </div>
 
 @push('scripts')
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+<script defer src="{{ asset('js/alpine.min.js') }}"></script>
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('admissionApp', () => ({
