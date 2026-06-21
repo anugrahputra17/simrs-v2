@@ -23,4 +23,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: USERNAME_DOCKER_KAMU/laravel12-app:latest
+          tags: masput17/simrs:latest
