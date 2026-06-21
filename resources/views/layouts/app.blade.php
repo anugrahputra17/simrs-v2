@@ -115,10 +115,11 @@
                         </button>
                         <div>
                             <h2 class="text-lg font-semibold text-text-primary">@yield('page-title', 'Dashboard')</h2>
-                        <p class="text-xs text-text-muted mt-0.5">@yield('page-subtitle', 'SYMPHONY SIMRS v2.0 — Fasyankes Academic Simulation Engine')</p>
+                            <p class="text-xs text-text-muted mt-0.5">@yield('page-subtitle', 'SYMPHONY SIMRS v2.0 — Fasyankes Academic Simulation Engine')</p>
+                        </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span class="text-xs text-text-muted">{{ now()->format('d M Y, H:i') }}</span>
+                        <span id="current-time" class="text-xs text-text-muted">Loading...</span>
                         <div class="w-2 h-2 rounded-full bg-emerald-primary animate-pulse"></div>
                     </div>
                 </div>
@@ -167,6 +168,24 @@
                     localStorage.setItem('sidebar-collapsed', document.body.classList.contains('sidebar-collapsed'));
                 });
             }
+
+            // Live running clock
+            function updateClock() {
+                const timeEl = document.getElementById('current-time');
+                if (timeEl) {
+                    const now = new Date();
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+                    const month = months[now.getMonth()];
+                    const year = now.getFullYear();
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    
+                    timeEl.textContent = `${day} ${month} ${year}, ${hours}:${minutes}`;
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
         });
     </script>
 </body>
