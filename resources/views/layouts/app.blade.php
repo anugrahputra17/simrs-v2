@@ -8,19 +8,35 @@
     <title>@yield('title', 'SYMPHONY SIMRS v2.0')</title>
     <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        /* Smooth transitions for sidebar toggle */
+        aside {
+            transition: transform 0.3s ease-in-out !important;
+        }
+        main {
+            transition: margin-left 0.3s ease-in-out !important;
+        }
+        .sidebar-collapsed aside {
+            transform: translateX(-100%);
+        }
+        .sidebar-collapsed main {
+            margin-left: 0 !important;
+        }
+    </style>
 </head>
 <body class="min-h-screen bg-warm-bg">
+    <script>
+        if (localStorage.getItem('sidebar-collapsed') === 'true') {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    </script>
     <div class="flex min-h-screen">
         {{-- Sidebar --}}
         <aside class="w-64 bg-slate-header text-white flex flex-col fixed inset-y-0 left-0 z-30">
             {{-- Logo & Brand --}}
             <div class="p-5 border-b border-white/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-primary to-teal-primary flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                    </div>
+                    <img src="{{ asset('esa-unggul-logo.png') }}" alt="Logo Esa Unggul" class="h-10 w-auto object-contain">
                     <div>
                         <h1 class="text-sm font-bold tracking-wide">SYMPHONY</h1>
                         <p class="text-[10px] text-slate-400 tracking-widest uppercase">SIMRS v2.0</p>
@@ -91,8 +107,14 @@
             {{-- Top Header Bar --}}
             <header class="bg-white/80 backdrop-blur-sm border-b border-border sticky top-0 z-20">
                 <div class="px-8 py-4 flex items-center justify-between">
-                    <div>
-                        <h2 class="text-lg font-semibold text-text-primary">@yield('page-title', 'Dashboard')</h2>
+                    <div class="flex items-center gap-4">
+                        <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors focus:outline-none cursor-pointer" title="Toggle Sidebar">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        <div>
+                            <h2 class="text-lg font-semibold text-text-primary">@yield('page-title', 'Dashboard')</h2>
                         <p class="text-xs text-text-muted mt-0.5">@yield('page-subtitle', 'SYMPHONY SIMRS v2.0 — Fasyankes Academic Simulation Engine')</p>
                     </div>
                     <div class="flex items-center gap-3">
@@ -136,5 +158,16 @@
     </div>
 
     @stack('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtn = document.getElementById('toggleSidebar');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    document.body.classList.toggle('sidebar-collapsed');
+                    localStorage.setItem('sidebar-collapsed', document.body.classList.contains('sidebar-collapsed'));
+                });
+            }
+        });
+    </script>
 </body>
 </html>

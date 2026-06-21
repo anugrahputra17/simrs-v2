@@ -11,13 +11,11 @@
     <div class="w-full max-w-md">
         {{-- Logo Area --}}
         <div class="text-center mb-8 animate-fade-in">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-primary to-teal-primary shadow-lg mb-4">
-                <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                </svg>
+            <div class="inline-flex items-center justify-center mb-4">
+                <img src="{{ asset('esa-unggul-logo.png') }}" alt="Logo Esa Unggul" class="h-30 w-auto object-contain">
             </div>
-            <h1 class="text-2xl font-bold text-text-primary tracking-tight">SYMPHONY SIMRS</h1>
-            <p class="text-sm text-text-muted mt-1">Fasyankes Academic Simulation Engine v2.0</p>
+            <h4 class="text-2xl font-bold text-text-primary tracking-tight">SYMPHONY SIMRS</h4>
+            <!-- <p class="text-sm text-text-muted mt-1">Fasyankes Academic Simulation Engine v2.0</p> -->
             <p class="text-xs text-text-muted mt-0.5">Universitas Esa Unggul</p>
         </div>
 
