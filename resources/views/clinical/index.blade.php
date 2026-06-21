@@ -26,11 +26,11 @@
                              data-registration-id="{{ $reg->id }}"
                              onclick="selectPatient({{ $reg->id }})">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-xs font-bold text-white">
-                                {{ strtoupper(substr($reg->patient->nama, 0, 2)) }}
+                                {{ strtoupper(substr($reg->patient->nama_lengkap, 0, 2)) }}
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium truncate">{{ $reg->patient->nama }}</p>
-                                <p class="text-xs text-text-muted">{{ $reg->patient->nomor_rm }} · {{ $reg->klinik_tujuan }}</p>
+                                <p class="text-sm font-medium truncate">{{ $reg->patient->nama_lengkap }}</p>
+                                <p class="text-xs text-text-muted">{{ $reg->patient->no_rm }} · {{ $reg->klinik_tujuan }}</p>
                             </div>
                             <span class="badge {{ $reg->status_antrean === 'waiting' ? 'badge-waiting' : 'badge-treating' }}">
                                 {{ $reg->status_antrean === 'waiting' ? 'W' : 'T' }}
@@ -63,13 +63,6 @@
                         </p>
                     </div>
                 </div>
-                <form method="POST" id="completeForm" action="">
-                    @csrf
-                    <button type="submit" class="btn btn-secondary btn-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Selesai Dilayani
-                    </button>
-                </form>
             </div>
         </div>
 
@@ -93,15 +86,15 @@
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div>
                         <label for="tensi" class="form-label">Tensi (mmHg)</label>
-                        <input type="text" id="tensi" name="tensi" class="form-input" placeholder="120/80" disabled>
+                        <input type="text" id="tensi" name="tensi" class="form-input" placeholder="120/80" disabled required>
                     </div>
                     <div>
                         <label for="nadi" class="form-label">Nadi (x/menit)</label>
-                        <input type="text" id="nadi" name="nadi" class="form-input" placeholder="80" disabled>
+                        <input type="text" id="nadi" name="nadi" class="form-input" placeholder="80" disabled required>
                     </div>
                     <div>
                         <label for="suhu" class="form-label">Suhu (°C)</label>
-                        <input type="text" id="suhu" name="suhu" class="form-input" placeholder="36.5" disabled>
+                        <input type="text" id="suhu" name="suhu" class="form-input" placeholder="36.5" disabled required>
                     </div>
                 </div>
 
@@ -114,7 +107,7 @@
                                 Subjektif
                             </span>
                         </label>
-                        <textarea id="subjektif" name="subjektif" rows="3" class="form-input" placeholder="Keluhan utama pasien..." disabled></textarea>
+                        <textarea id="subjektif" name="subjektif" rows="3" class="form-input" placeholder="Keluhan utama pasien..." disabled required></textarea>
                     </div>
                     <div>
                         <label for="objektif" class="form-label">
@@ -123,7 +116,7 @@
                                 Objektif
                             </span>
                         </label>
-                        <textarea id="objektif" name="objektif" rows="3" class="form-input" placeholder="Hasil pemeriksaan fisik..." disabled></textarea>
+                        <textarea id="objektif" name="objektif" rows="3" class="form-input" placeholder="Hasil pemeriksaan fisik..." disabled required></textarea>
                     </div>
                     <div>
                         <label for="asesmen" class="form-label">
@@ -132,7 +125,7 @@
                                 Asesmen
                             </span>
                         </label>
-                        <textarea id="asesmen" name="asesmen" rows="3" class="form-input" placeholder="Diagnosis / penilaian klinis..." disabled></textarea>
+                        <textarea id="asesmen" name="asesmen" rows="3" class="form-input" placeholder="Diagnosis / penilaian klinis..." disabled required></textarea>
                     </div>
                     <div>
                         <label for="plan" class="form-label">
@@ -141,14 +134,14 @@
                                 Plan
                             </span>
                         </label>
-                        <textarea id="plan" name="plan" rows="3" class="form-input" placeholder="Rencana tindakan / terapi..." disabled></textarea>
+                        <textarea id="plan" name="plan" rows="3" class="form-input" placeholder="Rencana tindakan / terapi..." disabled required></textarea>
                     </div>
                 </div>
 
                 <div class="flex justify-end pt-6">
                     <button type="submit" class="btn btn-primary" id="saveSoapBtn" disabled>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Simpan Rekam Medis
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Simpan & Selesaikan Pelayanan
                     </button>
                 </div>
             </form>
@@ -177,13 +170,12 @@
                 // Show patient banner
                 const banner = document.getElementById('patientBanner');
                 banner.classList.remove('hidden');
-                document.getElementById('patientName').textContent = data.patient.nama;
-                document.getElementById('patientRm').textContent = data.patient.nomor_rm;
-                document.getElementById('patientGender').textContent = data.patient.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+                document.getElementById('patientName').textContent = data.patient.nama_lengkap;
+                document.getElementById('patientRm').textContent = data.patient.no_rm;
+                document.getElementById('patientGender').textContent = data.patient.jenis_kelamin == '1' ? 'Laki-laki' : 'Perempuan';
                 document.getElementById('patientAge').textContent = data.age;
                 document.getElementById('patientClinic').textContent = data.registration.klinik_tujuan;
-                document.getElementById('patientInitials').textContent = data.patient.nama.substring(0, 2).toUpperCase();
-                document.getElementById('completeForm').action = `/clinical/complete/${registrationId}`;
+                document.getElementById('patientInitials').textContent = data.patient.nama_lengkap.substring(0, 2).toUpperCase();
 
                 // Set registration ID
                 document.getElementById('registrationId').value = registrationId;

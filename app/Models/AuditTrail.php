@@ -10,6 +10,7 @@ class AuditTrail extends Model
         'user_id',
         'action',
         'table_name',
+        'search_query_logged',
     ];
 
     public $timestamps = false;
@@ -33,6 +34,18 @@ class AuditTrail extends Model
                 'user_id' => auth()->id(),
                 'action' => $action,
                 'table_name' => $tableName,
+            ]);
+        }
+    }
+
+    public static function logSearch(string $query, string $result): void
+    {
+        if (auth()->check()) {
+            static::create([
+                'user_id' => auth()->id(),
+                'action' => 'SEARCH_' . strtoupper($result), // SEARCH_FOUND or SEARCH_NOT_FOUND
+                'table_name' => 'patients',
+                'search_query_logged' => $query,
             ]);
         }
     }

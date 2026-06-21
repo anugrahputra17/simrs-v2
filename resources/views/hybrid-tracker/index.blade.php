@@ -28,14 +28,13 @@
                         <th>Nomor Rak (Fisik)</th>
                         <th>Status Scan PDF (Digital)</th>
                         <th>Kelengkapan (KLPCM)</th>
-                        <th class="w-24">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($trackers as $tracker)
                         <tr>
-                            <td class="font-mono text-xs font-semibold">{{ $tracker->patient->nomor_rm }}</td>
-                            <td class="font-medium">{{ $tracker->patient->nama }}</td>
+                            <td class="font-mono text-xs font-semibold">{{ $tracker->patient->no_rm }}</td>
+                            <td class="font-medium">{{ $tracker->patient->nama_lengkap }}</td>
                             <td>
                                 <form action="{{ route('hybrid-tracker.update', $tracker->id) }}" method="POST" class="flex items-center gap-2" id="form-rak-{{ $tracker->id }}">
                                     @csrf
@@ -63,11 +62,6 @@
                                     <div class="toggle-switch {{ $tracker->is_lengkap ? 'active' : '' }}" onclick="document.getElementById('form-lengkap-{{ $tracker->id }}').submit()"></div>
                                     <span class="text-xs mt-1 block {{ $tracker->is_lengkap ? 'text-emerald-primary' : 'text-text-muted' }}">{{ $tracker->is_lengkap ? 'Lengkap' : 'Incomplete' }}</span>
                                 </form>
-                            </td>
-                            <td>
-                                <a href="/coding/{{ $tracker->patient->registrations->last()?->medicalRecord?->id ?? 0 }}" class="btn btn-secondary btn-sm" title="Lihat Rekam Medis">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                </a>
                             </td>
                         </tr>
                     @endforeach

@@ -24,18 +24,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Admission Desk
+    Route::get('/admission/search', [AdmissionController::class, 'searchPatient'])->name('admission.search');
     Route::get('/admission', [AdmissionController::class, 'index'])->name('admission.index');
     Route::post('/admission', [AdmissionController::class, 'store'])->name('admission.store');
-    Route::post('/admission/register-existing', [AdmissionController::class, 'registerExisting'])->name('admission.registerExisting');
 
     // Clinical Workstation
     Route::get('/clinical', [ClinicalController::class, 'index'])->name('clinical.index');
     Route::get('/clinical/patient/{registrationId}', [ClinicalController::class, 'getPatientData'])->name('clinical.patient');
     Route::post('/clinical', [ClinicalController::class, 'store'])->name('clinical.store');
-    Route::post('/clinical/complete/{id}', [ClinicalController::class, 'complete'])->name('clinical.complete');
 
     // Coding (Terminology)
+    Route::get('/coding', [TerminologyProxyController::class, 'list'])->name('coding.list');
     Route::get('/coding/{medicalRecordId}', [TerminologyProxyController::class, 'index'])->name('coding.index');
+    Route::post('/coding/{medicalRecordId}/complete', [TerminologyProxyController::class, 'completeCoding'])->name('coding.complete');
     Route::get('/api/snomed/search', [TerminologyProxyController::class, 'search'])->name('snomed.search');
     Route::get('/api/snomed/map/{conceptId}', [TerminologyProxyController::class, 'mapIcd10'])->name('snomed.map');
     Route::post('/api/coding/store', [TerminologyProxyController::class, 'storeCoding'])->name('coding.store');

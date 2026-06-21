@@ -87,6 +87,7 @@
         </div>
 
         {{-- SNOMED Search --}}
+        @if($medicalRecord->status_coding !== 'done')
         <div class="card p-6 mb-6">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 rounded-xl bg-emerald-light flex items-center justify-center">
@@ -98,10 +99,11 @@
                 </div>
             </div>
 
-            <div class="relative">
-                <input type="text" id="snomedSearch" class="form-input pl-10" placeholder="Ketik diagnosis (min 2 karakter)... cth: Appendicitis, Gastritis, GERD">
-                <svg class="w-5 h-5 text-text-muted absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <div class="absolute right-3 top-3 hidden" id="searchSpinner">
+            <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                <svg style="position: absolute; left: 1.25rem; width: 1.25rem; height: 1.25rem; color: #94a3b8; pointer-events: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" id="snomedSearch" class="form-input text-sm" style="padding-top: 0.875rem; padding-bottom: 0.875rem; padding-left: 3.25rem; padding-right: 1rem; width: 100%;" placeholder="Ketik diagnosis (min 2 karakter)... cth: Appendicitis, Gastritis, GERD">
+                
+                <div style="position: absolute; right: 1.25rem;" class="hidden" id="searchSpinner">
                     <svg class="w-5 h-5 text-emerald-primary animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                 </div>
             </div>
@@ -134,9 +136,10 @@
                 </div>
             </div>
         </div>
+        @endif
 
         {{-- Existing Codings List --}}
-        <div class="card p-6">
+        <div class="card p-6 mb-6">
             <h3 class="font-semibold text-text-primary mb-4">Daftar Diagnosis Terkode</h3>
             <div id="codingsList">
                 @if($medicalRecord->codings->count() > 0)
@@ -158,9 +161,11 @@
                                         ICD-10: <span class="font-mono font-semibold text-blue-info">{{ $coding->icd10_mapped_code }}</span>
                                     </p>
                                 </div>
+                                @if($medicalRecord->status_coding !== 'done')
                                 <button onclick="deleteCoding({{ $coding->id }})" class="text-text-muted hover:text-crimson transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -169,6 +174,22 @@
                 @endif
             </div>
         </div>
+
+        {{-- Finalize Action --}}
+        @if($medicalRecord->status_coding !== 'done')
+        <form method="POST" action="{{ route('coding.complete', $medicalRecord->id) }}" onsubmit="return confirm('Apakah Anda yakin ingin memfinalisasi data koding ini? Setelah difinalisasi, data tidak dapat diubah lagi.')">
+            @csrf
+            <button type="submit" class="btn btn-primary w-full py-3 text-base">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                Finalisasi & Selesai Coding
+            </button>
+        </form>
+        @else
+        <div class="bg-emerald-50 text-emerald-800 p-4 rounded-xl border border-emerald-200 text-center flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="font-bold">Dokumen Rekam Medis Ini Telah Selesai Dikoding.</span>
+        </div>
+        @endif
     </div>
 </div>
 

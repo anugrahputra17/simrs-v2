@@ -62,24 +62,20 @@ class ClinicalController extends Controller
                 'subjektif', 'objektif', 'asesmen', 'plan', 'tensi', 'nadi', 'suhu'
             ]));
             AuditTrail::log('UPDATE', 'medical_records');
-            $message = 'Rekam medis berhasil diperbarui.';
+            $message = 'Rekam medis berhasil diperbarui dan layanan selesai.';
         } else {
             MedicalRecord::create($request->only([
                 'registration_id', 'subjektif', 'objektif', 'asesmen', 'plan', 'tensi', 'nadi', 'suhu'
             ]));
             AuditTrail::log('CREATE', 'medical_records');
-            $message = 'Rekam medis berhasil disimpan.';
+            $message = 'Rekam medis berhasil disimpan dan layanan selesai.';
         }
 
-        return redirect('/clinical')->with('success', $message);
-    }
-
-    public function complete($id)
-    {
-        $registration = Registration::findOrFail($id);
+        // Update registration status to done
+        $registration = Registration::findOrFail($request->registration_id);
         $registration->update(['status_antrean' => 'done']);
         AuditTrail::log('UPDATE', 'registrations');
 
-        return redirect('/clinical')->with('success', 'Pasien selesai dilayani.');
+        return redirect('/clinical')->with('success', $message);
     }
 }

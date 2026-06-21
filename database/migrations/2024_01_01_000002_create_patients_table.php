@@ -10,11 +10,57 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->string('nomor_rm')->unique();
-            $table->string('nama');
-            $table->char('nik', 16)->unique();
+            $table->string('no_rm')->unique();
+            $table->string('gelar_kehormatan')->nullable();
+            $table->string('nama_lengkap');
+            $table->char('nik', 16)->default('9999999999999999');
+            $table->char('no_bpjs', 13)->nullable()->unique();
+            $table->string('no_identitas_lain')->nullable();
+            $table->boolean('status_merokok')->default(false)->comment('0=Tidak, 1=Ya');
+            $table->string('nama_ibu_kandung');
+            $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
-            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->tinyInteger('jenis_kelamin')->comment('0=Tidak diketahui, 1=Laki-laki, 2=Perempuan, 3=Tidak ditentukan, 4=Tidak mengisi');
+            $table->tinyInteger('agama')->comment('1-8');
+            $table->string('agama_lainnya')->nullable();
+            $table->string('suku');
+            $table->string('bahasa_dikuasai');
+            $table->string('no_telepon_rumah')->nullable();
+            $table->string('no_hp');
+            $table->tinyInteger('pendidikan')->comment('0-8');
+            $table->tinyInteger('pekerjaan')->comment('0-5');
+            $table->string('pekerjaan_lainnya')->nullable();
+            $table->tinyInteger('status_pernikahan')->comment('1-4');
+
+            // Emergency Contact Data
+            $table->string('emergency_nama');
+            $table->string('emergency_hubungan');
+            $table->char('emergency_no_ktp', 16);
+            $table->string('emergency_no_hp');
+            $table->text('emergency_alamat');
+            
+            // Alamat KTP
+            $table->text('alamat_ktp');
+            $table->char('rt_ktp', 3);
+            $table->char('rw_ktp', 3);
+            $table->bigInteger('kelurahan_id_ktp');
+            $table->bigInteger('kecamatan_id_ktp');
+            $table->bigInteger('kabupaten_id_ktp');
+            $table->bigInteger('provinsi_id_ktp');
+            $table->string('kode_pos_ktp');
+            $table->string('negara_ktp');
+
+            // Alamat Domisili
+            $table->text('alamat_domisili');
+            $table->char('rt_domisili', 3);
+            $table->char('rw_domisili', 3);
+            $table->bigInteger('kelurahan_id_domisili');
+            $table->bigInteger('kecamatan_id_domisili');
+            $table->bigInteger('kabupaten_id_domisili');
+            $table->bigInteger('provinsi_id_domisili');
+            $table->string('kode_pos_domisili');
+            $table->string('negara_domisili');
+
             $table->string('penjamin');
             $table->timestamps();
         });

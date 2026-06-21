@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('registrations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
+            $table->enum('type_kunjungan', ['Baru', 'Lama'])->default('Baru');
             $table->string('klinik_tujuan');
             $table->enum('status_antrean', ['waiting', 'treating', 'done'])->default('waiting');
             $table->timestamps();
