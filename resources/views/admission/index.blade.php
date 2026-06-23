@@ -35,7 +35,8 @@
         box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
         outline: none;
     }
-    .stitch-input:read-only {
+    .stitch-input[readonly],
+    .stitch-input:disabled {
         background-color: #f1f5f9;
         border-color: #e2e8f0;
         color: #64748b;
@@ -378,10 +379,42 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div><label class="stitch-label">RT <span class="text-red-500">*</span></label><input type="text" name="rt_ktp" x-model="alamat.ktp.rt" maxlength="3" class="stitch-input" required></div>
                         <div><label class="stitch-label">RW <span class="text-red-500">*</span></label><input type="text" name="rw_ktp" x-model="alamat.ktp.rw" maxlength="3" class="stitch-input" required></div>
-                        <div><label class="stitch-label">ID Provinsi <span class="text-red-500">*</span></label><input type="number" name="provinsi_id_ktp" x-model="alamat.ktp.provinsi_id" class="stitch-input" required></div>
-                        <div><label class="stitch-label">ID Kab/Kota <span class="text-red-500">*</span></label><input type="number" name="kabupaten_id_ktp" x-model="alamat.ktp.kabupaten_id" class="stitch-input" required></div>
-                        <div><label class="stitch-label">ID Kecamatan <span class="text-red-500">*</span></label><input type="number" name="kecamatan_id_ktp" x-model="alamat.ktp.kecamatan_id" class="stitch-input" required></div>
-                        <div><label class="stitch-label">ID Kel/Desa <span class="text-red-500">*</span></label><input type="number" name="kelurahan_id_ktp" x-model="alamat.ktp.kelurahan_id" class="stitch-input" required></div>
+                        <div>
+                            <label class="stitch-label">Provinsi <span class="text-red-500">*</span></label>
+                            <select name="provinsi_ktp" x-model="alamat.ktp.provinsi_name" @change="handleRegionChange('provinsi', 'ktp')" class="stitch-input" required>
+                                <option value="">— Pilih Provinsi —</option>
+                                <template x-for="prov in regionData.provinces" :key="prov.id">
+                                    <option :value="prov.name" x-text="prov.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="stitch-label">Kabupaten/Kota <span class="text-red-500">*</span></label>
+                            <select name="kabupaten_ktp" x-model="alamat.ktp.kabupaten_name" @change="handleRegionChange('kabupaten', 'ktp')" class="stitch-input" required :disabled="!alamat.ktp.provinsi_name">
+                                <option value="">— Pilih Kota/Kab —</option>
+                                <template x-for="reg in regionData.ktp.regencies" :key="reg.id">
+                                    <option :value="reg.name" x-text="reg.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="stitch-label">Kecamatan <span class="text-red-500">*</span></label>
+                            <select name="kecamatan_ktp" x-model="alamat.ktp.kecamatan_name" @change="handleRegionChange('kecamatan', 'ktp')" class="stitch-input" required :disabled="!alamat.ktp.kabupaten_name">
+                                <option value="">— Pilih Kecamatan —</option>
+                                <template x-for="dist in regionData.ktp.districts" :key="dist.id">
+                                    <option :value="dist.name" x-text="dist.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="stitch-label">Kelurahan/Desa <span class="text-red-500">*</span></label>
+                            <select name="kelurahan_ktp" x-model="alamat.ktp.kelurahan_name" class="stitch-input" required :disabled="!alamat.ktp.kecamatan_name">
+                                <option value="">— Pilih Kelurahan/Desa —</option>
+                                <template x-for="vill in regionData.ktp.villages" :key="vill.id">
+                                    <option :value="vill.name" x-text="vill.name"></option>
+                                </template>
+                            </select>
+                        </div>
                         <div><label class="stitch-label">Kode Pos <span class="text-red-500">*</span></label><input type="text" name="kode_pos_ktp" x-model="alamat.ktp.kode_pos" class="stitch-input" required></div>
                         <div><label class="stitch-label">Negara <span class="text-red-500">*</span></label><input type="text" name="negara_ktp" x-model="alamat.ktp.negara" class="stitch-input" required></div>
                     </div>
@@ -404,10 +437,42 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div><label class="stitch-label">RT <span class="text-red-500">*</span></label><input type="text" name="rt_domisili" maxlength="3" class="stitch-input" :value="copyKtp ? alamat.ktp.rt : alamat.domisili.rt" @input="alamat.domisili.rt = $event.target.value" required></div>
                             <div><label class="stitch-label">RW <span class="text-red-500">*</span></label><input type="text" name="rw_domisili" maxlength="3" class="stitch-input" :value="copyKtp ? alamat.ktp.rw : alamat.domisili.rw" @input="alamat.domisili.rw = $event.target.value" required></div>
-                            <div><label class="stitch-label">ID Provinsi <span class="text-red-500">*</span></label><input type="number" name="provinsi_id_domisili" class="stitch-input" :value="copyKtp ? alamat.ktp.provinsi_id : alamat.domisili.provinsi_id" @input="alamat.domisili.provinsi_id = $event.target.value" required></div>
-                            <div><label class="stitch-label">ID Kab/Kota <span class="text-red-500">*</span></label><input type="number" name="kabupaten_id_domisili" class="stitch-input" :value="copyKtp ? alamat.ktp.kabupaten_id : alamat.domisili.kabupaten_id" @input="alamat.domisili.kabupaten_id = $event.target.value" required></div>
-                            <div><label class="stitch-label">ID Kecamatan <span class="text-red-500">*</span></label><input type="number" name="kecamatan_id_domisili" class="stitch-input" :value="copyKtp ? alamat.ktp.kecamatan_id : alamat.domisili.kecamatan_id" @input="alamat.domisili.kecamatan_id = $event.target.value" required></div>
-                            <div><label class="stitch-label">ID Kel/Desa <span class="text-red-500">*</span></label><input type="number" name="kelurahan_id_domisili" class="stitch-input" :value="copyKtp ? alamat.ktp.kelurahan_id : alamat.domisili.kelurahan_id" @input="alamat.domisili.kelurahan_id = $event.target.value" required></div>
+                            <div>
+                                <label class="stitch-label">Provinsi <span class="text-red-500">*</span></label>
+                                <select name="provinsi_domisili" x-model="alamat.domisili.provinsi_name" @change="handleRegionChange('provinsi', 'domisili')" class="stitch-input" required>
+                                    <option value="">— Pilih Provinsi —</option>
+                                    <template x-for="prov in regionData.provinces" :key="prov.id">
+                                        <option :value="prov.name" x-text="prov.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="stitch-label">Kabupaten/Kota <span class="text-red-500">*</span></label>
+                                <select name="kabupaten_domisili" x-model="alamat.domisili.kabupaten_name" @change="handleRegionChange('kabupaten', 'domisili')" class="stitch-input" required :disabled="!alamat.domisili.provinsi_name">
+                                    <option value="">— Pilih Kota/Kab —</option>
+                                    <template x-for="reg in regionData.domisili.regencies" :key="reg.id">
+                                        <option :value="reg.name" x-text="reg.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="stitch-label">Kecamatan <span class="text-red-500">*</span></label>
+                                <select name="kecamatan_domisili" x-model="alamat.domisili.kecamatan_name" @change="handleRegionChange('kecamatan', 'domisili')" class="stitch-input" required :disabled="!alamat.domisili.kabupaten_name">
+                                    <option value="">— Pilih Kecamatan —</option>
+                                    <template x-for="dist in regionData.domisili.districts" :key="dist.id">
+                                        <option :value="dist.name" x-text="dist.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="stitch-label">Kelurahan/Desa <span class="text-red-500">*</span></label>
+                                <select name="kelurahan_domisili" x-model="alamat.domisili.kelurahan_name" class="stitch-input" required :disabled="!alamat.domisili.kecamatan_name">
+                                    <option value="">— Pilih Kelurahan/Desa —</option>
+                                    <template x-for="vill in regionData.domisili.villages" :key="vill.id">
+                                        <option :value="vill.name" x-text="vill.name"></option>
+                                    </template>
+                                </select>
+                            </div>
                             <div><label class="stitch-label">Kode Pos <span class="text-red-500">*</span></label><input type="text" name="kode_pos_domisili" class="stitch-input" :value="copyKtp ? alamat.ktp.kode_pos : alamat.domisili.kode_pos" @input="alamat.domisili.kode_pos = $event.target.value" required></div>
                             <div><label class="stitch-label">Negara <span class="text-red-500">*</span></label><input type="text" name="negara_domisili" class="stitch-input" :value="copyKtp ? alamat.ktp.negara : alamat.domisili.negara" @input="alamat.domisili.negara = $event.target.value" required></div>
                         </div>
@@ -528,11 +593,17 @@
                 id: '', no_rm: '', gelar_kehormatan: '', nama_lengkap: '', nik: '', no_identitas_lain: '', no_bpjs: '', status_merokok: '', tempat_lahir: '', tanggal_lahir: '', jenis_kelamin: '', nama_ibu_kandung: '', agama: '', suku: '', bahasa_dikuasai: 'Indonesia', status_pernikahan: '', pendidikan: '', pekerjaan: '', no_telepon_rumah: '', no_hp: '', emergency_nama: '', emergency_hubungan: '', emergency_no_ktp: '', emergency_no_hp: '', emergency_alamat: '', penjamin: '', klinik_tujuan: ''
             },
             alamat: {
-                ktp: { alamat: '', rt: '', rw: '', provinsi_id: '', kabupaten_id: '', kecamatan_id: '', kelurahan_id: '', kode_pos: '', negara: 'Indonesia' },
-                domisili: { alamat: '', rt: '', rw: '', provinsi_id: '', kabupaten_id: '', kecamatan_id: '', kelurahan_id: '', kode_pos: '', negara: 'Indonesia' }
+                ktp: { alamat: '', rt: '', rw: '', provinsi_name: '', kabupaten_name: '', kecamatan_name: '', kelurahan_name: '', kode_pos: '', negara: 'Indonesia' },
+                domisili: { alamat: '', rt: '', rw: '', provinsi_name: '', kabupaten_name: '', kecamatan_name: '', kelurahan_name: '', kode_pos: '', negara: 'Indonesia' }
+            },
+            regionData: {
+                provinces: [],
+                ktp: { regencies: [], districts: [], villages: [] },
+                domisili: { regencies: [], districts: [], villages: [] }
             },
 
             init() {
+                this.fetchProvinces();
                 this.$watch('isWna', value => {
                     if(value) {
                         this.form.nik = '9999999999999999';
@@ -540,17 +611,93 @@
                         if(this.form.nik === '9999999999999999') this.form.nik = '';
                     }
                 });
+
+                this.$watch('copyKtp', value => {
+                    if(value) {
+                        this.alamat.domisili = JSON.parse(JSON.stringify(this.alamat.ktp));
+                        this.regionData.domisili.regencies = [...this.regionData.ktp.regencies];
+                        this.regionData.domisili.districts = [...this.regionData.ktp.districts];
+                        this.regionData.domisili.villages = [...this.regionData.ktp.villages];
+                    }
+                });
+
+                this.$watch('alamat.ktp', value => {
+                    if(this.copyKtp) {
+                        this.alamat.domisili = JSON.parse(JSON.stringify(value));
+                        this.regionData.domisili.regencies = [...this.regionData.ktp.regencies];
+                        this.regionData.domisili.districts = [...this.regionData.ktp.districts];
+                        this.regionData.domisili.villages = [...this.regionData.ktp.villages];
+                    }
+                }, { deep: true });
+            },
+
+            async fetchProvinces() {
+                try {
+                    const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+                    this.regionData.provinces = await res.json();
+                } catch (e) { console.error('Gagal memuat provinsi'); }
+            },
+            async fetchRegencies(provId, type) {
+                if(!provId) return;
+                try {
+                    const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provId}.json`);
+                    this.regionData[type].regencies = await res.json();
+                } catch(e) {}
+            },
+            async fetchDistricts(regId, type) {
+                if(!regId) return;
+                try {
+                    const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regId}.json`);
+                    this.regionData[type].districts = await res.json();
+                } catch(e) {}
+            },
+            async fetchVillages(distId, type) {
+                if(!distId) return;
+                try {
+                    const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${distId}.json`);
+                    this.regionData[type].villages = await res.json();
+                } catch(e) {}
+            },
+
+            handleRegionChange(level, type) {
+                if(level === 'provinsi') {
+                    const name = this.alamat[type].provinsi_name;
+                    const prov = this.regionData.provinces.find(p => p.name === name);
+                    this.regionData[type].regencies = [];
+                    this.regionData[type].districts = [];
+                    this.regionData[type].villages = [];
+                    this.alamat[type].kabupaten_name = '';
+                    this.alamat[type].kecamatan_name = '';
+                    this.alamat[type].kelurahan_name = '';
+                    if(prov) this.fetchRegencies(prov.id, type);
+                } else if(level === 'kabupaten') {
+                    const name = this.alamat[type].kabupaten_name;
+                    const reg = this.regionData[type].regencies.find(r => r.name === name);
+                    this.regionData[type].districts = [];
+                    this.regionData[type].villages = [];
+                    this.alamat[type].kecamatan_name = '';
+                    this.alamat[type].kelurahan_name = '';
+                    if(reg) this.fetchDistricts(reg.id, type);
+                } else if(level === 'kecamatan') {
+                    const name = this.alamat[type].kecamatan_name;
+                    const dist = this.regionData[type].districts.find(d => d.name === name);
+                    this.regionData[type].villages = [];
+                    this.alamat[type].kelurahan_name = '';
+                    if(dist) this.fetchVillages(dist.id, type);
+                }
             },
 
             resetForm() {
                 this.form = { id: '', no_rm: '', gelar_kehormatan: '', nama_lengkap: '', nik: '', no_identitas_lain: '', no_bpjs: '', status_merokok: '', tempat_lahir: '', tanggal_lahir: '', jenis_kelamin: '', nama_ibu_kandung: '', agama: '', suku: '', bahasa_dikuasai: 'Indonesia', status_pernikahan: '', pendidikan: '', pekerjaan: '', no_telepon_rumah: '', no_hp: '', emergency_nama: '', emergency_hubungan: '', emergency_no_ktp: '', emergency_no_hp: '', emergency_alamat: '', penjamin: '', klinik_tujuan: '' };
-                this.alamat.ktp = { alamat: '', rt: '', rw: '', provinsi_id: '', kabupaten_id: '', kecamatan_id: '', kelurahan_id: '', kode_pos: '', negara: 'Indonesia' };
-                this.alamat.domisili = { alamat: '', rt: '', rw: '', provinsi_id: '', kabupaten_id: '', kecamatan_id: '', kelurahan_id: '', kode_pos: '', negara: 'Indonesia' };
+                this.alamat.ktp = { alamat: '', rt: '', rw: '', provinsi_name: '', kabupaten_name: '', kecamatan_name: '', kelurahan_name: '', kode_pos: '', negara: 'Indonesia' };
+                this.alamat.domisili = { alamat: '', rt: '', rw: '', provinsi_name: '', kabupaten_name: '', kecamatan_name: '', kelurahan_name: '', kode_pos: '', negara: 'Indonesia' };
+                this.regionData.ktp = { regencies: [], districts: [], villages: [] };
+                this.regionData.domisili = { regencies: [], districts: [], villages: [] };
                 this.copyKtp = false;
                 this.isWna = false;
             },
 
-            populateForm(data) {
+            async populateForm(data) {
                 this.form.id = data.id;
                 this.form.no_rm = data.no_rm;
                 this.form.gelar_kehormatan = data.gelar_kehormatan || '';
@@ -581,22 +728,52 @@
                 this.alamat.ktp.alamat = data.alamat_ktp || '';
                 this.alamat.ktp.rt = data.rt_ktp || '';
                 this.alamat.ktp.rw = data.rw_ktp || '';
-                this.alamat.ktp.provinsi_id = data.provinsi_id_ktp || '';
-                this.alamat.ktp.kabupaten_id = data.kabupaten_id_ktp || '';
-                this.alamat.ktp.kecamatan_id = data.kecamatan_id_ktp || '';
-                this.alamat.ktp.kelurahan_id = data.kelurahan_id_ktp || '';
                 this.alamat.ktp.kode_pos = data.kode_pos_ktp || '';
                 this.alamat.ktp.negara = data.negara_ktp || 'Indonesia';
 
                 this.alamat.domisili.alamat = data.alamat_domisili || '';
                 this.alamat.domisili.rt = data.rt_domisili || '';
                 this.alamat.domisili.rw = data.rw_domisili || '';
-                this.alamat.domisili.provinsi_id = data.provinsi_id_domisili || '';
-                this.alamat.domisili.kabupaten_id = data.kabupaten_id_domisili || '';
-                this.alamat.domisili.kecamatan_id = data.kecamatan_id_domisili || '';
-                this.alamat.domisili.kelurahan_id = data.kelurahan_id_domisili || '';
                 this.alamat.domisili.kode_pos = data.kode_pos_domisili || '';
                 this.alamat.domisili.negara = data.negara_domisili || 'Indonesia';
+
+                if (data.provinsi_ktp) {
+                    this.alamat.ktp.provinsi_name = data.provinsi_ktp;
+                    const prov = this.regionData.provinces.find(p => p.name === data.provinsi_ktp);
+                    if (prov) {
+                        await this.fetchRegencies(prov.id, 'ktp');
+                        this.alamat.ktp.kabupaten_name = data.kabupaten_ktp || '';
+                        const reg = this.regionData.ktp.regencies.find(r => r.name === data.kabupaten_ktp);
+                        if (reg) {
+                            await this.fetchDistricts(reg.id, 'ktp');
+                            this.alamat.ktp.kecamatan_name = data.kecamatan_ktp || '';
+                            const dist = this.regionData.ktp.districts.find(d => d.name === data.kecamatan_ktp);
+                            if (dist) {
+                                await this.fetchVillages(dist.id, 'ktp');
+                                this.alamat.ktp.kelurahan_name = data.kelurahan_ktp || '';
+                            }
+                        }
+                    }
+                }
+
+                if (data.provinsi_domisili) {
+                    this.alamat.domisili.provinsi_name = data.provinsi_domisili;
+                    const prov = this.regionData.provinces.find(p => p.name === data.provinsi_domisili);
+                    if (prov) {
+                        await this.fetchRegencies(prov.id, 'domisili');
+                        this.alamat.domisili.kabupaten_name = data.kabupaten_domisili || '';
+                        const reg = this.regionData.domisili.regencies.find(r => r.name === data.kabupaten_domisili);
+                        if (reg) {
+                            await this.fetchDistricts(reg.id, 'domisili');
+                            this.alamat.domisili.kecamatan_name = data.kecamatan_domisili || '';
+                            const dist = this.regionData.domisili.districts.find(d => d.name === data.kecamatan_domisili);
+                            if (dist) {
+                                await this.fetchVillages(dist.id, 'domisili');
+                                this.alamat.domisili.kelurahan_name = data.kelurahan_domisili || '';
+                            }
+                        }
+                    }
+                }
 
                 this.form.penjamin = '';
                 this.form.klinik_tujuan = '';

@@ -43,10 +43,10 @@ return new class extends Migration
             $table->text('alamat_ktp');
             $table->char('rt_ktp', 3);
             $table->char('rw_ktp', 3);
-            $table->bigInteger('kelurahan_id_ktp');
-            $table->bigInteger('kecamatan_id_ktp');
-            $table->bigInteger('kabupaten_id_ktp');
-            $table->bigInteger('provinsi_id_ktp');
+            $table->string('kelurahan_ktp');
+            $table->string('kecamatan_ktp');
+            $table->string('kabupaten_ktp');
+            $table->string('provinsi_ktp');
             $table->string('kode_pos_ktp');
             $table->string('negara_ktp');
 
@@ -54,10 +54,10 @@ return new class extends Migration
             $table->text('alamat_domisili');
             $table->char('rt_domisili', 3);
             $table->char('rw_domisili', 3);
-            $table->bigInteger('kelurahan_id_domisili');
-            $table->bigInteger('kecamatan_id_domisili');
-            $table->bigInteger('kabupaten_id_domisili');
-            $table->bigInteger('provinsi_id_domisili');
+            $table->string('kelurahan_domisili');
+            $table->string('kecamatan_domisili');
+            $table->string('kabupaten_domisili');
+            $table->string('provinsi_domisili');
             $table->string('kode_pos_domisili');
             $table->string('negara_domisili');
 
