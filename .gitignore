@@ -19,7 +19,11 @@
 /storage/*.key
 /storage/pail
 /vendor
+/.agents
+tests
 Homestead.json
 Homestead.yaml
 Thumbs.db
 prd-symphony-simrs.md
+phpunit.xml
+/docs

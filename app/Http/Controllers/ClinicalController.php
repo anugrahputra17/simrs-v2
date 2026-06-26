@@ -6,6 +6,7 @@ use App\Models\Registration;
 use App\Models\MedicalRecord;
 use App\Models\AuditTrail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClinicalController extends Controller
 {
@@ -13,7 +14,7 @@ class ClinicalController extends Controller
     {
         $queue = Registration::with('patient')
             ->whereIn('status_antrean', ['waiting', 'treating'])
-            ->orderByRaw("FIELD(status_antrean, 'treating', 'waiting')")
+            ->orderByRaw("CASE WHEN status_antrean = 'treating' THEN 1 WHEN status_antrean = 'waiting' THEN 2 ELSE 3 END")
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -56,25 +57,29 @@ class ClinicalController extends Controller
             'suhu' => 'required|string',
         ]);
 
-        $existing = MedicalRecord::where('registration_id', $request->registration_id)->first();
-        if ($existing) {
-            $existing->update($request->only([
-                'subjektif', 'objektif', 'asesmen', 'plan', 'tensi', 'nadi', 'suhu'
-            ]));
-            AuditTrail::log('UPDATE', 'medical_records');
-            $message = 'Rekam medis berhasil diperbarui dan layanan selesai.';
-        } else {
-            MedicalRecord::create($request->only([
-                'registration_id', 'subjektif', 'objektif', 'asesmen', 'plan', 'tensi', 'nadi', 'suhu'
-            ]));
-            AuditTrail::log('CREATE', 'medical_records');
-            $message = 'Rekam medis berhasil disimpan dan layanan selesai.';
-        }
+        $message = DB::transaction(function () use ($request) {
+            $existing = MedicalRecord::where('registration_id', $request->registration_id)->first();
+            if ($existing) {
+                $existing->update($request->only([
+                    'subjektif', 'objektif', 'asesmen', 'plan', 'tensi', 'nadi', 'suhu'
+                ]));
+                AuditTrail::log('UPDATE', 'medical_records');
+                $message = 'Rekam medis berhasil diperbarui dan layanan selesai.';
+            } else {
+                MedicalRecord::create($request->only([
+                    'registration_id', 'subjektif', 'objektif', 'asesmen', 'plan', 'tensi', 'nadi', 'suhu'
+                ]));
+                AuditTrail::log('CREATE', 'medical_records');
+                $message = 'Rekam medis berhasil disimpan dan layanan selesai.';
+            }
 
-        // Update registration status to done
-        $registration = Registration::findOrFail($request->registration_id);
-        $registration->update(['status_antrean' => 'done']);
-        AuditTrail::log('UPDATE', 'registrations');
+            // Update registration status to done
+            $registration = Registration::findOrFail($request->registration_id);
+            $registration->update(['status_antrean' => 'done']);
+            AuditTrail::log('UPDATE', 'registrations');
+
+            return $message;
+        });
 
         return redirect('/clinical')->with('success', $message);
     }

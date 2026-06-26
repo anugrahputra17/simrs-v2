@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('audit_trails', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('action');
-            $table->string('table_name');
+            $table->string('action')->index();
+            $table->string('table_name')->index();
             $table->string('search_query_logged')->nullable();
             $table->timestamp('created_at', 6)->useCurrent();
         });
