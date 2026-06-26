@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('medical_record_id')->constrained('medical_records')->onDelete('cascade');
             $table->string('snomed_concept_id')->nullable();
             $table->string('snomed_term')->nullable();
-            $table->string('icd10_mapped_code')->nullable();
-            $table->boolean('is_primary_diagnosis')->default(false);
+            $table->string('icd10_mapped_code')->nullable()->index();
+            $table->boolean('is_primary_diagnosis')->default(false)->index();
             $table->string('miscoding_status')->nullable();
             $table->timestamps();
         });

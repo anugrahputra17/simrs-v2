@@ -7,6 +7,7 @@ use App\Models\MedicalRecord;
 use App\Models\AuditTrail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class TerminologyProxyController extends Controller
 {
@@ -162,46 +163,55 @@ class TerminologyProxyController extends Controller
             'is_primary_diagnosis' => 'required|boolean',
         ]);
 
-        $miscoding = $this->evaluateMiscoding(
-            $request->medical_record_id,
-            $request->snomed_term,
-            $request->is_primary_diagnosis
-        );
+        $miscoding = DB::transaction(function () use ($request) {
+            $miscodingResult = $this->evaluateMiscoding(
+                $request->medical_record_id,
+                $request->snomed_term,
+                $request->is_primary_diagnosis
+            );
 
-        $coding = Coding::create([
-            'medical_record_id' => $request->medical_record_id,
-            'snomed_concept_id' => $request->snomed_concept_id,
-            'snomed_term' => $request->snomed_term,
-            'icd10_mapped_code' => $request->icd10_mapped_code,
-            'is_primary_diagnosis' => $request->is_primary_diagnosis,
-            'miscoding_status' => $miscoding,
-        ]);
+            $coding = Coding::create([
+                'medical_record_id' => $request->medical_record_id,
+                'snomed_concept_id' => $request->snomed_concept_id,
+                'snomed_term' => $request->snomed_term,
+                'icd10_mapped_code' => $request->icd10_mapped_code,
+                'is_primary_diagnosis' => $request->is_primary_diagnosis,
+                'miscoding_status' => $miscodingResult,
+            ]);
 
-        AuditTrail::log('CREATE', 'codings');
+            AuditTrail::log('CREATE', 'codings');
 
+            return $miscodingResult;
+        });
+
+        // Fetch the newly created coding to return it (or just return the request data as it was mostly created)
+        // Actually, to return the exact coding we can return an array from the transaction
         return response()->json([
             'success' => true,
-            'coding' => $coding,
             'miscoding_status' => $miscoding,
         ]);
     }
 
     public function deleteCoding($id)
     {
-        $coding = Coding::findOrFail($id);
-        $coding->delete();
-        AuditTrail::log('DELETE', 'codings');
+        DB::transaction(function () use ($id) {
+            $coding = Coding::findOrFail($id);
+            $coding->delete();
+            AuditTrail::log('DELETE', 'codings');
+        });
 
         return response()->json(['success' => true]);
     }
 
     public function completeCoding($id)
     {
-        $medicalRecord = MedicalRecord::findOrFail($id);
-        $medicalRecord->status_coding = 'done';
-        $medicalRecord->save();
-        
-        AuditTrail::log('UPDATE', 'medical_records');
+        DB::transaction(function () use ($id) {
+            $medicalRecord = MedicalRecord::findOrFail($id);
+            $medicalRecord->status_coding = 'done';
+            $medicalRecord->save();
+            
+            AuditTrail::log('UPDATE', 'medical_records');
+        });
 
         return redirect('/coding')->with('success', 'Koding berhasil difinalisasi.');
     }

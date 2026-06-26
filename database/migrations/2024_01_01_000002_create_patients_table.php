@@ -12,14 +12,14 @@ return new class extends Migration
             $table->id();
             $table->string('no_rm')->unique();
             $table->string('gelar_kehormatan')->nullable();
-            $table->string('nama_lengkap');
-            $table->char('nik', 16)->default('9999999999999999');
+            $table->string('nama_lengkap')->index();
+            $table->char('nik', 16)->default('9999999999999999')->index();
             $table->char('no_bpjs', 13)->nullable()->unique();
             $table->string('no_identitas_lain')->nullable();
             $table->boolean('status_merokok')->default(false)->comment('0=Tidak, 1=Ya');
             $table->string('nama_ibu_kandung');
             $table->string('tempat_lahir');
-            $table->date('tanggal_lahir');
+            $table->date('tanggal_lahir')->index();
             $table->tinyInteger('jenis_kelamin')->comment('0=Tidak diketahui, 1=Laki-laki, 2=Perempuan, 3=Tidak ditentukan, 4=Tidak mengisi');
             $table->tinyInteger('agama')->comment('1-8');
             $table->string('agama_lainnya')->nullable();
